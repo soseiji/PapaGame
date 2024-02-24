@@ -1,0 +1,152 @@
+﻿<Window x:Class="MancalaApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MancalaApp"
+        xmlns:materialDesign="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        Title="まんから" Height="700" Width="1200">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Width" Value="160" />
+            <Setter Property="Height" Value="160" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="3" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="LightGray" />
+                <GradientStop Color="DimGray" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+
+        <StackPanel Height="80" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,30,0,0">
+            <Button x:Name="ButtonStart" Margin="0,0,0,0" Width="180" Height="60" FontSize="20" Click="ButtonStart_Click" Content="は じ め る" />
+            <Button x:Name="ButtonEnd" Margin="0,0,0,0" Width="180" Height="60" FontSize="20" Click="ButtonEnd_Click" Content="お わ る" Visibility="Collapsed" />
+
+            <StackPanel x:Name="StackPanelOption" Orientation="Horizontal">
+                <StackPanel VerticalAlignment="Center">
+                    <CheckBox x:Name="CheckBoxPapa" IsChecked="True" Content="パパたいけつモード" Foreground="DimGray" FontSize="18" Margin="20,0,0,0" FontWeight="Bold" />
+                    <Label Content="（うえがパパ）" Margin="30,-3,0,-20" Foreground="DimGray" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="30,0,0,0">
+                    <Label Content="マスのかず" FontWeight="Bold" VerticalAlignment="Center" Foreground="DimGray" />
+                    <ComboBox 
+                    x:Name="ComboBoxSize"                 
+                    Padding="5"
+                    Foreground="DimGray"
+                    FontSize="24"
+                    Width="70" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="15,0,0,0">
+                    <Label Content="はじめの石のかず" FontWeight="Bold" VerticalAlignment="Center" Foreground="DimGray" />
+                    <ComboBox 
+                    x:Name="ComboBoxStoneCount"                 
+                    Padding="5"
+                    Foreground="DimGray"
+                    FontSize="24"
+                    Width="70" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
+                    <Label Content="勝ちかた" FontWeight="Bold" VerticalAlignment="Center" Foreground="DimGray" />
+                    <ComboBox 
+                    x:Name="ComboBoxFinishRule"                 
+                    Padding="5"
+                    Foreground="DimGray"
+                    FontSize="20"
+                    Width="250" />
+                </StackPanel>
+
+            </StackPanel>
+
+        </StackPanel>
+
+        <Grid Grid.Row="1" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Border Background="DarkRed" Height="330" CornerRadius="5" Grid.Column="0" Margin="0,0,5,0">
+                <Grid>
+                    <local:PocketUserControl x:Name="PocketUserControlPlayer1Goal" Margin="20" />
+                    <materialDesign:PackIcon Kind="ArrowRightBold" Foreground="White" Width="30" Height="30" HorizontalAlignment="Right" />
+                    <materialDesign:PackIcon Kind="ArrowLeftBold" Foreground="White" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+                </Grid>
+            </Border>
+            <Border Background="DarkGreen" Height="330" CornerRadius="5" Grid.Column="2" Margin="5,0,0,0">
+                <Grid>
+                    <local:PocketUserControl x:Name="PocketUserControlPlayer2Goal" Margin="20"  />
+                    <materialDesign:PackIcon Kind="ArrowRightBold" Foreground="White" Width="30" Height="30" HorizontalAlignment="Left" />
+                    <materialDesign:PackIcon Kind="ArrowLeftBold" Foreground="White" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <ItemsControl  x:Name="ItemsControlPlayer2" Grid.Row="0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Click="ButtonPlayer_Click">
+                                <local:PocketUserControl Pocket="{Binding}" />
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Grid x:Name="GridPlayer2Cover" Grid.Row="0" Background="Gray" Opacity="0.4" />
+                <Grid x:Name="GridPlayer2CoverPapa" Margin="0,-50,0,0">
+                    <materialDesign:PackIcon Kind="Face" Foreground="White" Width="40" Height="40" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                    <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Width="40" Height="40" IsIndeterminate="True" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                </Grid>
+
+                <ItemsControl  x:Name="ItemsControlPlayer1" Grid.Row="1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Click="ButtonPlayer_Click">
+                                <local:PocketUserControl Pocket="{Binding}" />
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Grid x:Name="GridPlayer1Cover" Grid.Row="1" Background="Gray" Opacity="0.4" />
+                <Grid x:Name="GridPlayer1CoverPapa" Grid.Row="1" Margin="0,0,0,-50" VerticalAlignment="Bottom">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <materialDesign:PackIcon Kind="HandOkay" Foreground="White" Width="30" Height="30" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                        <Label Content="まゆちゃん の ばんだよ" VerticalContentAlignment="Center" Foreground="White" FontWeight="Bold" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+
+
+    </Grid>
+</Window>

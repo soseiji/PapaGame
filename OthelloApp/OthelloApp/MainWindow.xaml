@@ -1,0 +1,211 @@
+﻿<Window x:Class="OthelloApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:OthelloApp"
+        mc:Ignorable="d"
+        xmlns:materialDesign="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        Title="おせろ" 
+        WindowState="Maximized"
+        FontSize="20"        
+        Height="700" 
+        Width="930">
+
+
+    <!--コードビハインドあり-->
+
+    <Window.Resources>
+        <Style x:Key="ButtonStone" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Width" Value="60" />
+            <Setter Property="Height" Value="60" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Margin="{TemplateBinding Margin}" Background="{TemplateBinding Background}" CornerRadius="100">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="Gray" />
+                <GradientStop Color="DimGray" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- 設定などなど -->
+        <Grid Grid.Column="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <Button Style="{StaticResource ButtonStone}" Width="40" Height="40"  >
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="DimGray"/>
+                                <GradientStop Color="Black" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Label x:Name="LabelBlack" Foreground="Black" FontWeight="Bold" FontSize="40" Margin="10,0,0,0" />
+                    <Label x:Name="LabelBlackTurn" Content="くろのばんです" Foreground="Black" FontSize="20" Margin="30,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <Button Style="{StaticResource ButtonStone}" Width="40" Height="40"  >
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="White"/>
+                                <GradientStop Color="LightGray" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Button.Background>
+                    </Button>
+                    <Label x:Name="LabelWhite" Foreground="White" FontWeight="Bold" FontSize="40" Margin="10,0,0,0" />
+                    <Label x:Name="LabelWhiteTurn" Content="しろのばんです" Foreground="White" FontSize="20" Margin="30,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <Button 
+                    x:Name="ButtonPass" 
+                    Content="パ  ス" 
+                    Height="Auto"
+                    Padding="0,20,0,20"
+                    Margin="0,60,0,0"
+                    Click="ButtonPass_Click" />
+            </StackPanel>
+
+
+            <CheckBox 
+                x:Name="CheckBoxPapa" 
+                Grid.Row="1"
+                Content="パパたいけつモード" 
+                IsChecked="True" 
+                FontWeight="Bold" 
+                Foreground="White" />
+
+            <WrapPanel Grid.Row="2">
+                <ComboBox 
+                    x:Name="ComboBoxBoardSize" Width="170" Padding="10" 
+                    FontSize="26" Margin="0,10,0,10" Background="LightGray" />
+                <Label Content="の 大きさ" VerticalContentAlignment="Center" Margin="5,0,0,0" Foreground="White" FontWeight="Bold" />
+            </WrapPanel>
+
+            <Button 
+                x:Name="ButtonStart" 
+                Grid.Row="3"
+                FontSize="25"
+                Height="Auto"
+                Padding="0,30,0,30"
+                Click="ButtonStart_Click">
+
+                <WrapPanel>
+                    <Label Content="はじめる" VerticalContentAlignment="Center"  />
+                    <materialDesign:PackIcon Kind="SmileyHappyOutline" Width="35" Height="50" HorizontalAlignment="Center" Margin="0,0,0,0" />
+                </WrapPanel>
+            </Button>
+
+        </Grid>
+
+        <!-- オセロ盤 -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Grid>
+                <ItemsControl x:Name="ItemsControl1" 
+                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                              BorderBrush="DarkGreen" BorderThickness="8">
+
+                    <!-- パネルの設定 -->
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <!-- ココ大事。盤のサイズを決める。コードビハインドでサイズ調整。 -->
+                            <UniformGrid Margin="0" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <!-- 表示内容の設定 -->
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="DarkGreen" BorderThickness="1">
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="Background" >
+                                            <Setter.Value>
+                                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                    <GradientStop Color="Green"/>
+                                                    <GradientStop Color="DarkGreen" Offset="1.7"/>
+                                                </LinearGradientBrush>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPutted}" Value="true">
+                                                <Setter Property="Background" Value="MediumSeaGreen" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
+                                <Button Click="Button_Click" Foreground="Orange" FontSize="18">
+                                    <Button.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="30" />
+                                        </Style>
+                                    </Button.Resources>
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStone}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Color}" Value="None">
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Color}" Value="Black">
+                                                    <Setter Property="Background" >
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                <GradientStop Color="DimGray"/>
+                                                                <GradientStop Color="Black" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Color}" Value="White">
+                                                    <Setter Property="Background" >
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                <GradientStop Color="White"/>
+                                                                <GradientStop Color="LightGray" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsReversed}" Value="true">
+                                                    <Setter Property="Content" Value="★" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+
+</Window>

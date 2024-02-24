@@ -1,0 +1,233 @@
+﻿<Window x:Class="GomokuApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GomokuApp"
+        mc:Ignorable="d"
+        xmlns:materialDesign="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        Title="４目ならべ" 
+        WindowState="Maximized"
+        FontSize="20"        
+        Height="700" 
+        Width="930">
+
+    <Window.Resources>
+        <Style x:Key="ButtonStone" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Width" Value="50" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Margin="{TemplateBinding Margin}" Background="{TemplateBinding Background}" CornerRadius="100">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="LightGray" />
+                <GradientStop Color="DimGray" Offset="1" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="10" />
+        </Grid.ColumnDefinitions>
+
+        <!-- 設定などなど -->
+        <Grid Grid.Column="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Button 
+                    x:Name="ButtonSet" 
+                    Height="Auto"
+                    FontSize="25"
+                    Padding="0,30,0,30"
+                    Margin="0,0,0,50"
+                    Visibility="Collapsed"
+                    Click="ButtonSet_Click">
+                <StackPanel>
+                    <Label Content="お と す" VerticalContentAlignment="Center" Foreground="White" />
+                    <materialDesign:PackIcon Kind="Download" Width="70" Height="70" HorizontalAlignment="Center" Margin="0,15,0,0" />
+                </StackPanel>
+            </Button>
+
+            <CheckBox 
+                x:Name="CheckBoxPapa" 
+                Grid.Row="1"
+                Content="パパたいけつモード" 
+                IsChecked="True" 
+                FontWeight="Bold" 
+                Foreground="White" />
+
+            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <ComboBox 
+                    x:Name="ComboBoxThreshold"                 
+                    Padding="10"
+                    Width="180"
+                    Margin="0,10,0,10"
+                    Background="LightGray" />
+                <Label Content="もく 並べ" VerticalAlignment="Center" Foreground="White" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="3">
+                <ComboBox 
+                    x:Name="ComboBoxBoardSize"                 
+                    Padding="10"
+                    Width="180"
+                    Margin="0,10,0,10"
+                    Background="LightGray" />
+                <Label Content="の 大きさ" VerticalAlignment="Center" Foreground="White" />
+            </StackPanel>
+
+            <Button 
+                x:Name="ButtonStart" 
+                Grid.Row="4"
+                Visibility="Visible"
+                Content="は じ め る"
+                FontSize="25"
+                Height="Auto"
+                Padding="0,30,0,30"
+                Click="ButtonStart_Click"  />
+            <Button 
+                x:Name="ButtonEnd" 
+                Grid.Row="4"
+                Visibility="Collapsed"
+                Content="お わ る"
+                FontSize="25"
+                Height="Auto"
+                Padding="0,30,0,30"
+                Click="ButtonEnd_Click" />
+
+        </Grid>
+
+        <!-- 盤 -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <StackPanel VerticalAlignment="Center">
+
+                <UniformGrid x:Name="UniformGridColumn" Rows="1"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,10,0,0">
+                    <UniformGrid.Resources>
+                        <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource MaterialDesignActionToggleButton}">
+                            <!-- Widthは ボタンサイズに+2する -->
+                            <Setter Property="Width" Value="52" />
+                            <Setter Property="Height" Value="50" />
+                            <Setter Property="Margin" Value="0,0,0,10" />
+                            <Setter Property="Foreground" Value="Orange" />
+                            
+                        </Style>
+                    </UniformGrid.Resources>
+                </UniformGrid>
+                <ItemsControl BorderBrush="LightGray" BorderThickness="7"
+                    x:Name="ItemsControl1" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Top">
+
+                    <!-- パネルの設定 -->
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <!-- ココ大事。盤のサイズを決める。コードビハインドでサイズ調整。 -->
+                            <UniformGrid Margin="3" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <!-- 表示内容の設定 -->
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="DeepSkyBlue" BorderThickness="1">
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="Background" >
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="#FF2196F3" Opacity="0.3"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPutted}" Value="true">
+                                                <Setter Property="Background" >
+                                                    <Setter.Value>
+                                                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                            <GradientStop Color="Orange"/>
+                                                            <GradientStop Color="DarkOrange" Offset="1"/>
+                                                        </LinearGradientBrush>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
+                                <Button Foreground="Orange" FontSize="18">
+                                    <Button.Resources>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Setter Property="CornerRadius" Value="30" />
+                                        </Style>
+                                    </Button.Resources>
+                                    <Button.Style>
+                                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonStone}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Color}" Value="None">
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Color}" Value="Black">
+                                                    <Setter Property="Background"  >
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                <GradientStop Color="Gray"/>
+                                                                <GradientStop Color="Black" Offset="1"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Color}" Value="White">
+                                                    <Setter Property="Background"  >
+                                                        <Setter.Value>
+                                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                                <GradientStop Color="White"/>
+                                                                <GradientStop Color="Gray" Offset="1.5"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsFinished}" Value="true">
+                                                    <Setter Property="Content" Value="★" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+
+        <GridSplitter Grid.Column="2" Background="Gray" Width="7" HorizontalAlignment="Stretch" />
+
+        <!--ログ-->
+        <ScrollViewer Grid.Column="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <TextBox x:Name="TextBoxLog" FontSize="13" Foreground="LightGray" IsReadOnly="True" />
+        </ScrollViewer>
+
+    </Grid>
+
+</Window>

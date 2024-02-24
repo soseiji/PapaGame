@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="MancalaApp.PocketUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MancalaApp"
+             mc:Ignorable="d" 
+            HorizontalAlignment="Center" VerticalAlignment="Stretch">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Ellipse}">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Fill">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="SkyBlue"/>
+                        <GradientStop Color="Blue" Offset="1.5"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid Width="160" Height="160">
+        
+        <UniformGrid x:Name="UniformGridPocket" />
+        
+        <Label x:Name="LabelCount" Content="---" Foreground="White" FontWeight="Bold" FontSize="24"
+               HorizontalAlignment="Center" VerticalAlignment="Center" Padding="0" Margin="0,0,1,3" />
+    </Grid>
+
+</UserControl>
